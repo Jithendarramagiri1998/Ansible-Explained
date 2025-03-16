@@ -112,6 +112,43 @@ Modules are reusable units of code to control system resources efficiently.
   ansible -i inventory all -m ansible.builtin.setup
   ```
 
+### Ansible Playbooks
+Playbooks are YAML files that define tasks to be executed on remote servers. They are more powerful and reusable than ad-hoc commands.
+
+#### Example Playbook:
+```yaml
+---
+- name: Install Git and Jenkins
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Git on git_server
+      apt:
+        name: git
+        state: present
+        update_cache: yes
+      when: "'git_server' in group_names"
+
+    - name: Install Jenkins on jenkins_server
+      apt:
+        name: jenkins
+        state: present
+        update_cache: yes
+      when: "'jenkins_server' in group_names"
+
+    - name: Ensure Jenkins service is running
+      service:
+        name: jenkins
+        state: started
+        enabled: yes
+      when: "'jenkins_server' in group_names"
+```
+
+#### Run the playbook:
+```bash
+ansible-playbook -i /etc/ansible/inventory playbook.yml
+```
+
 ### Conclusion
 Ansible simplifies server management by automating repetitive tasks, reducing human error, and increasing efficiency. By leveraging SSH passwordless authentication, inventory management, and various modules, we can streamline IT operations seamlessly.
 
